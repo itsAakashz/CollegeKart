@@ -1,62 +1,44 @@
 "use client"
-import React, { useState } from 'react';
-import { MdDashboard } from 'react-icons/md';
+import { useState } from 'react';
 
-const Navbar = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+export default function Navbar() {
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="bg-[#005f73] text-white p-4">
-      <div className="container mx-auto flex items-center justify-between">
-        {/* Logo */}
-        <img src="landing/logo.png" alt="" srcset="" />
-        <div className="text-lg font-bold">
-          <a href="/" className="hover:underline">
-            CollegeKart
-          </a>
-        </div>
-
-        {/* Search Bar */}
-        <div className="flex-grow mx-4">
-          <input
-            type="text"
-            placeholder="Search..."
-            className="w-full p-2 rounded text-black"
-          />
-        </div>
-
-        {/* Desktop Dashboard Link */}
-        <div className="hidden lg:block">
-          <a href="/dashboard" className="hover:underline font-semibold">
-            Dashboard
-          </a>
-        </div>
-
-        {/* Mobile Menu Button */}
-        <div className="lg:hidden flex items-center">
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="text-2xl"
-          >
-            <MdDashboard />
-          </button>
-        </div>
+    <nav className="flex items-center justify-between px-6 py-4 bg-teal-700 text-white relative">
+      <div className="flex items-center">
+        <img src="landing/logo.png" alt="CollegeKart Logo" className="h-10 w-10 mr-2" />
+        <span className="text-2xl font-bold">CollegeKart</span>
       </div>
 
-      {/* Mobile Menu */}
-      {isMobileMenuOpen && (
-        <div className="lg:hidden mt-4 text-center">
-          <a
-            href="/dashboard"
-            className="block text-lg text-white py-2 hover:bg-[#003d48] rounded"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            Dashboard
-          </a>
+      <div className="hidden md:flex items-center space-x-6">
+        <input
+          type="text"
+          placeholder="Search for products..."
+          className="w-full md:w-96 p-2 rounded-full border-none outline-none"
+        />
+        <a href='\dashboard' className="px-4 py-2 bg-yellow-500 text-white rounded-full">Login</a>
+        <a href='\dashboard' className="px-4 py-2 bg-yellow-500 text-white rounded-full">Sell Items</a>
+        <a href='\dashboard' className="px-4 py-2 bg-yellow-500 text-white rounded-full">Profile</a>
+      </div>
+
+      <button
+        className="md:hidden flex flex-col space-y-1 focus:outline-none"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <span className="block h-0.5 w-6 bg-white"></span>
+        <span className="block h-0.5 w-6 bg-white"></span>
+        <span className="block h-0.5 w-6 bg-white"></span>
+      </button>
+
+      {isOpen && (
+        <div className="absolute top-14 left-0 w-full bg-teal-700 md:hidden flex flex-col items-center space-y-4 py-4">
+          {/* <a href="/dashboard" className="text-white">Home</a>
+          <a href="/dashboard" className="text-white">Shop</a>
+          <a href="/features" className="text-white">Features</a>
+          <a href="/contact" className="text-white">Contact</a> */}
         </div>
       )}
     </nav>
   );
-};
-
-export default Navbar;
+}
