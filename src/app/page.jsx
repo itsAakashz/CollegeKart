@@ -52,7 +52,7 @@ export default function Home() {
         </p>
         <div className="inline-block pt-[20px]">
           <button className="bg-blue-700 text-white text-center text-[20px] font-semibold px-6 py-3 rounded-md shadow-lg hover:bg-blue-800 hover:shadow-xl transition-all duration-300 ease-in-out">
-            <a href="/marketplace">Explore</a>
+            <a href="/marketplace">Visit Marketplace</a>
           </button>
         </div>
       </section>

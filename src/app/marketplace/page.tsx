@@ -1,12 +1,13 @@
 import React from 'react'
 import Navbar from "../components/navbar"
 import Footer from "../components/footer"
+import ProductCard from "../components/ProductCard"
 
 const page = () => {
   return (
     <div>
       <Navbar/>
-      <h1>Chutiya</h1>
+      <ProductCard/>
       <Footer/>
     </div>
   )

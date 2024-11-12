@@ -19,7 +19,7 @@ const LoginPage = () => {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      router.push("/dashboard");
+      router.push("/marketplace");
     } catch (err: any) {
       setError(err.message);
     }
