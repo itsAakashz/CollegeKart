@@ -33,10 +33,10 @@ export default function Navbar() {
 
       {isOpen && (
         <div className="absolute top-14 left-0 w-full bg-teal-700 md:hidden flex flex-col items-center space-y-4 py-4">
-          {/* <a href="/dashboard" className="text-white">Home</a>
+          <a href="/dashboard" className="text-white">Home</a>
           <a href="/dashboard" className="text-white">Shop</a>
           <a href="/features" className="text-white">Features</a>
-          <a href="/contact" className="text-white">Contact</a> */}
+          <a href="/contact" className="text-white">Contact</a>
         </div>
       )}
     </nav>
