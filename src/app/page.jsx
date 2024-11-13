@@ -78,7 +78,7 @@ export default function Home() {
         <img
           src="landing/community2.png"
           alt="Community Image"
-          className="w-full max-w-3xl mx-auto mt-8 rounded-lg rounded-[70px]"
+          className="w-full max-w-3xl mx-auto mt-8 rounded-[70px]"
         />
       </section>
 
