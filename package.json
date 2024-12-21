@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@material-tailwind/react": "^2.1.10",
+    "@supabase/supabase-js": "^2.46.1",
     "firebase": "^11.0.1",
     "next": "15.0.3",
     "react": "19.0.0-rc-66855b96-20241106",

@@ -1,10 +1,13 @@
 "use client";
 import { useState, useEffect } from "react";
-import { storage, db } from "../auth/firebaseConfig";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { doc, setDoc, collection } from "firebase/firestore";
-import { getAuth } from "firebase/auth"; // Import Firebase Auth
+import { createClient } from "@supabase/supabase-js";
 import { FaPlusCircle } from "react-icons/fa";
+
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+// Initialize Supabase client
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const IndexProduct = () => {
   const [userUID, setUserUID] = useState("");
@@ -17,12 +20,12 @@ const IndexProduct = () => {
   const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
-    // Get the currently logged-in user's UID
-    const auth = getAuth();
-    const user = auth.currentUser;
-    if (user) {
-      setUserUID(user.uid); // Set the UID from the logged-in user
-    }
+    // Get the logged-in user's UID
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) setUserUID(user.id);
+    };
+    fetchUser();
   }, []);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,56 +42,50 @@ const IndexProduct = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setSuccessMessage(""); // Clear previous success message
+    setSuccessMessage("");
 
     const imageUrlsArray: string[] = [];
 
     if (images.length > 0) {
-      // Upload images to Firebase Storage
       for (const image of images) {
-        const storageRef = ref(storage, `products/${image.name}`);
-        const uploadTask = uploadBytesResumable(storageRef, image);
+        const filePath = `products/${userUID}/${image.name}`;
+        
+        // Upload image to Supabase storage
+        const { data, error } = await supabase.storage
+          .from("products")
+          .upload(filePath, image);
 
-        uploadTask.on(
-          "state_changed",
-          (snapshot) => {
-            // Optionally track upload progress
-          },
-          (error) => {
-            console.error("Image upload failed:", error);
-            setLoading(false);
-          },
-          async () => {
-            // Get the download URL after upload completes
-            const url = await getDownloadURL(uploadTask.snapshot.ref);
-            imageUrlsArray.push(url);
+        if (error) {
+          console.error("Image upload failed:", error.message);
+          setLoading(false);
+          return;
+        }
 
-            // If all images are uploaded, proceed to save product data
-            if (imageUrlsArray.length === images.length) {
-              await saveProductData(imageUrlsArray);
-            }
-          }
-        );
+        // Get public URL for the uploaded image
+        const { publicURL } = supabase.storage.from("products").getPublicUrl(filePath);
+        if (publicURL) imageUrlsArray.push(publicURL);
       }
-    } else {
-      // Save product data without images if no images are uploaded
-      await saveProductData(imageUrlsArray);
     }
+
+    await saveProductData(imageUrlsArray);
   };
 
   const saveProductData = async (imageUrls: string[]) => {
     try {
-      // Reference to the user's collection using the UID
-      const userProductRef = doc(collection(db, `users/${userUID}/products`));
-      await setDoc(userProductRef, {
-        uid: userUID, // Include the UID in the product data
-        productName,
-        price,
-        title,
-        genre,
-        imageUrls,
-        createdAt: new Date(), // Optional timestamp
-      });
+      // Insert product data into Supabase
+      const { error } = await supabase.from("products").insert([
+        {
+          uid: userUID,
+          product_name: productName,
+          price,
+          title,
+          genre,
+          image_urls: imageUrls,
+          created_at: new Date(),
+        },
+      ]);
+
+      if (error) throw error;
 
       setLoading(false);
       setSuccessMessage("Product added successfully!");

@@ -19,7 +19,7 @@ export default function Home() {
       <nav className="flex justify-between items-center bg-gray-800 p-4 md:p-6">
         <div className="flex items-center">
           <img src="landing/logo.png" alt="CollegeKart Logo" className="w-12 h-12 mr-2" />
-          <span className="text-white text-2xl font-bold">CollegeKart</span>
+          <span className="text-white text-2xl font-bold">ClgCart</span>
         </div>
 
         <div className="hidden md:flex space-x-8">
@@ -46,7 +46,7 @@ export default function Home() {
       )}
 
       <section id="about" className="text-center py-16 bg-white">
-        <h1 className="text-3xl font-bold mb-4">Welcome to CollegeKart</h1>
+        <h1 className="text-3xl font-bold mb-4">Welcome to ClgCart</h1>
         <p className="text-lg text-gray-600">
           Your Sustainable, Campus-Specific Marketplace for Affordable Student Essentials
         </p>
@@ -58,7 +58,7 @@ export default function Home() {
       </section>
 
       <section id="features" className="bg-gray-50 py-16">
-        <h2 className="text-2xl font-bold text-center mb-8">Why Choose CollegeKart?</h2>
+        <h2 className="text-2xl font-bold text-center mb-8">Why Choose ClgCart?</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
           {benefits.map((benefit, index) => (
             <div key={index} className="text-center p-6 bg-white rounded-lg shadow-md">
@@ -89,11 +89,11 @@ export default function Home() {
         </p>
         <div className="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-8">
           <a
-            href="mailto:techtutez@gmail.com"
+            href="mailto:contact@clgcart.tech"
             className="flex items-center bg-white border border-gray-300 rounded-lg px-4 py-2 hover:shadow-md"
           >
             <img src="landing/mail.png" alt="Email Icon" className="w-8 h-8 mr-2" />
-            <span className="font-medium">techtutez@gmail.com</span>
+            <span className="font-medium">contact@clgcart.tech</span>
           </a>
           <a
             href="https://www.linkedin.com/in/aakashuuu"
@@ -102,14 +102,6 @@ export default function Home() {
           >
             <img src="landing/linkedin.png" alt="LinkedIn Icon" className="w-8 h-8 mr-2" />
             <span className="font-medium">@Aakashuuu</span>
-          </a>
-          <a
-            href="https://www.instagram.com/shivam.shah29/"
-            target="_blank"
-            className="flex items-center bg-white border border-gray-300 rounded-lg px-4 py-2 hover:shadow-md"
-          >
-            <img src="landing/insta.png" alt="Instagram Icon" className="w-8 h-8 mr-2" />
-            <span className="font-medium">@shivam.shah29</span>
           </a>
         </div>
       </section>
