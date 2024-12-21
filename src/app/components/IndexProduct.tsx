@@ -1,13 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
-import { createClient } from "@supabase/supabase-js";
 import { FaPlusCircle } from "react-icons/fa";
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-// Initialize Supabase client
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+import { auth, storage, firestore } from "../auth/firebaseConfig";
+import { onAuthStateChanged } from "firebase/auth";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { collection, addDoc } from "firebase/firestore";
 
 const IndexProduct = () => {
   const [userUID, setUserUID] = useState("");
@@ -18,14 +15,18 @@ const IndexProduct = () => {
   const [images, setImages] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     // Get the logged-in user's UID
-    const fetchUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) setUserUID(user.id);
-    };
-    fetchUser();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserUID(user.uid);
+      } else {
+        setErrorMessage("No user is logged in");
+      }
+    });
+    return () => unsubscribe();
   }, []);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,27 +44,25 @@ const IndexProduct = () => {
     e.preventDefault();
     setLoading(true);
     setSuccessMessage("");
+    setErrorMessage("");
 
     const imageUrlsArray: string[] = [];
 
     if (images.length > 0) {
       for (const image of images) {
         const filePath = `products/${userUID}/${image.name}`;
-        
-        // Upload image to Supabase storage
-        const { data, error } = await supabase.storage
-          .from("products")
-          .upload(filePath, image);
+        const imageRef = ref(storage, filePath);
 
-        if (error) {
-          console.error("Image upload failed:", error.message);
+        try {
+          // Upload image to Firebase storage
+          await uploadBytes(imageRef, image);
+          const publicURL = await getDownloadURL(imageRef);
+          imageUrlsArray.push(publicURL);
+        } catch (error) {
+          setErrorMessage("Image upload failed: " + (error as any).message);
           setLoading(false);
           return;
         }
-
-        // Get public URL for the uploaded image
-        const { publicURL } = supabase.storage.from("products").getPublicUrl(filePath);
-        if (publicURL) imageUrlsArray.push(publicURL);
       }
     }
 
@@ -72,20 +71,16 @@ const IndexProduct = () => {
 
   const saveProductData = async (imageUrls: string[]) => {
     try {
-      // Insert product data into Supabase
-      const { error } = await supabase.from("products").insert([
-        {
-          uid: userUID,
-          product_name: productName,
-          price,
-          title,
-          genre,
-          image_urls: imageUrls,
-          created_at: new Date(),
-        },
-      ]);
-
-      if (error) throw error;
+      // Insert product data into Firestore
+      await addDoc(collection(firestore, "products"), {
+        uid: userUID,
+        product_name: productName,
+        price,
+        title,
+        genre,
+        image_urls: imageUrls,
+        created_at: new Date(),
+      });
 
       setLoading(false);
       setSuccessMessage("Product added successfully!");
@@ -95,7 +90,7 @@ const IndexProduct = () => {
       setGenre("");
       setImages([]);
     } catch (error) {
-      console.error("Error saving product data:", error);
+      setErrorMessage("Error saving product data: " + (error as any).message);
       setLoading(false);
     }
   };
@@ -194,6 +189,11 @@ const IndexProduct = () => {
         {successMessage && (
           <div className="mb-4 text-green-600 font-semibold">
             {successMessage}
+          </div>
+        )}
+        {errorMessage && (
+          <div className="mb-4 text-red-600 font-semibold">
+            {errorMessage}
           </div>
         )}
         <div className="mb-4">
