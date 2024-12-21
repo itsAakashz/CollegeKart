@@ -103,6 +103,14 @@ export default function Home() {
             <img src="landing/linkedin.png" alt="LinkedIn Icon" className="w-8 h-8 mr-2" />
             <span className="font-medium">@Aakashuuu</span>
           </a>
+          <a
+            href="https://www.instagram.com/itsAakashz"
+            target="_blank"
+            className="flex items-center bg-white border border-gray-300 rounded-lg px-4 py-2 hover:shadow-md"
+          >
+            <img src="landing/insta.png" alt="LinkedIn Icon" className="w-8 h-8 mr-2" />
+            <span className="font-medium">@itsAakashz</span>
+          </a>
         </div>
       </section>
 
